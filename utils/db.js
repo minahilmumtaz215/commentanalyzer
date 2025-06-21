@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -19,7 +19,7 @@ async function connectToDatabase() {
     cached.promise = mongoose.connect(MONGO_URI, {
       dbName: "feedbackDBs",
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
   }
 
@@ -27,4 +27,4 @@ async function connectToDatabase() {
   return cached.conn;
 }
 
-module.exports = connectToDatabase;
+export default connectToDatabase;
