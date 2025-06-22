@@ -10,13 +10,15 @@ export default {
         message: '',
       },
       successMessage: '',
-      errorMessage: ''
+      errorMessage: '',
+      isLoading: false // Loading state
     }
   },
   methods: {
     async submitForm() {
       this.successMessage = ''
       this.errorMessage = ''
+      this.isLoading = true
 
       try {
         const response = await axios.post('https://commentanalyzer.vercel.app/api/feedback', this.form)
@@ -30,12 +32,13 @@ export default {
       } catch (error) {
         console.error('❌ Error:', error)
         this.errorMessage = 'Something went wrong. Please try again later.'
+      } finally {
+        this.isLoading = false
       }
     }
   }
 }
 </script>
-
 
 <template>
   <section class="navbar">
@@ -89,7 +92,14 @@ export default {
                   required
                 ></textarea>
               </div>
-              <button type="submit" class="submit-btn">Send Message</button>
+
+              <button type="submit" class="submit-btn" :disabled="isLoading">
+                {{ isLoading ? 'Sending...' : 'Send Message' }}
+              </button>
+
+              <!-- Optional spinner -->
+              <div v-if="isLoading" class="spinner"></div>
+
               <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
               <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
             </form>
@@ -111,15 +121,41 @@ export default {
   margin-top: 10px;
 }
 
+.loading-text {
+  color: white;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.spinner {
+  margin: 10px auto;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid black;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.submit-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
 .navbar {
   width: 100vw;
   background: linear-gradient(
     90deg,
     rgb(0, 0, 0) 40%,
-    /* Purple dominates the first 60% */ rgb(0, 0, 0) 55%,
-    /* Smooth blending zone starts here */ rgb(255, 255, 255) 100% /* Pink takes over by 80% */
-  ); /* Gradient Background */
-  padding: 10px 20px; /* Spacing for the navbar */
+    rgb(0, 0, 0) 55%,
+    rgb(255, 255, 255) 100%
+  );
+  padding: 10px 20px;
   position: sticky;
   top: 0;
 }
@@ -133,43 +169,43 @@ export default {
 .navbar .navbar-brand {
   font-size: 20px;
   font-weight: bold;
-  color: white; /* White text for the brand */
+  color: white;
   text-decoration: none;
 }
 
 .navbar .navbar-brand:hover {
-  color: white; /* Keep the color white on hover */
-  background: none; /* No background change */
+  color: white;
+  background: none;
 }
 
 .navbar .navbar-links {
-  list-style: none; /* Remove bullets */
+  list-style: none;
   display: flex;
-  gap: 20px; /* Spacing between links */
+  gap: 20px;
   margin: 0;
   padding: 0;
 }
 
 .navbar .navbar-links a {
-  color: white; /* White text for links */
-  text-decoration: none; /* Remove underline */
+  color: white;
+  text-decoration: none;
   font-size: 16px;
   transition: color 0.3s ease, background 0.3s ease;
-  padding: 5px 10px; /* Add padding for hover background */
-  border-radius: 5px; /* Rounded hover background */
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
 .navbar .navbar-links a:hover {
-  background: rgba(0, 0, 0, 0.3); /* Light black hover background */
-  color: white; /* White text on hover */
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
 }
 
 .feedback-content {
-  text-align: center; /* Centers the text */
-  display: flex; /* Enables flexbox for alignment */
-  flex-direction: column; /* Aligns elements vertically */
-  justify-content: center; /* Centers the content vertically */
-  align-items: center; /* Centers the content horizontally */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
 
@@ -186,14 +222,13 @@ export default {
   color: white;
 }
 
-/* Contact Form Styles */
 .contact-form {
   max-width: 600px;
   width: 100%;
-  background-color: rgba(245, 245, 245, 0.5); /* Semi-transparent white */
+  background-color: rgba(245, 245, 245, 0.5);
   padding: 20px 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -204,7 +239,7 @@ export default {
   width: 100%;
   padding: 12px 15px;
   font-size: 1rem;
-  border: 2px solid #fff; /* Orange border */
+  border: 2px solid #fff;
   border-radius: 5px;
   outline: none;
   color: #333;
@@ -215,18 +250,17 @@ export default {
 }
 
 .textarea {
-  height: 120px; /* Larger height for textarea */
-  resize: none; /* Disable resizing */
+  height: 120px;
+  resize: none;
 }
 
 .input-field:focus {
-  border-color: #626262; /* Highlighted border color */
-  background-color: #f7f7f7; /* Subtle orange background */
+  border-color: #626262;
+  background-color: #f7f7f7;
 }
 
-/* Submit Button */
 .submit-btn {
-  background-color: black; /* Orange button */
+  background-color: black;
   color: #fff;
   border: none;
   padding: 12px 20px;
@@ -238,8 +272,8 @@ export default {
   width: 100%;
 }
 
-.submit-btn:hover {
-  background-color: white; /* Darker orange on hover */
+.submit-btn:hover:enabled {
+  background-color: white;
   color: black;
 }
 </style>
