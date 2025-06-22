@@ -19,7 +19,7 @@ export default {
       this.errorMessage = ''
 
       try {
-        const response = await axios.post('https://fypfrontend-psi.vercel.app/api/feedback', this.form)
+        const response = await axios.post('https://commentanalyzer.vercel.app/api/feedback', this.form)
 
         if (response.status === 201) {
           this.successMessage = 'Feedback submitted successfully!'
