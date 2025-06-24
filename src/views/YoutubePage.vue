@@ -53,7 +53,7 @@ const analyzeComments = async () => {
 
   try {
     const encodedURL = encodeURIComponent(videoURL.value)
-    const response = await fetch(`http://127.0.0.1:8000/analyze?video_url=${encodedURL}`)
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/analyze?video_url=${encodedURL}`)
     const result = await response.json()
 
     if (!response.ok) {
