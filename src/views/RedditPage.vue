@@ -53,7 +53,7 @@ const analyzeComments = async () => {
 
   try {
     const encodedURL = encodeURIComponent(redditURL.value)
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/analyze_reddit_post?url=${encodedURL}`)
+    const response = await fetch(`https://backend-production-088a.up.railway.app/analyze_reddit_post?url=${encodedURL}`)
     const result = await response.json()
 
     if (!response.ok) {
